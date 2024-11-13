@@ -17,6 +17,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var splitNumberLabel: UILabel!
     var tipPc: Double = 0.0
     var splitNumber: Int = 0
+    var totalSplitAmount: Double = 0.0
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -58,12 +59,29 @@ class ViewController: UIViewController {
     
     @IBAction func calculatePressed(_ sender: UIButton) {
         let billAmount = Double(billTextField.text ?? "0.0")
-        print(tipPc)
-        print(splitNumber)
-        print(billAmount ?? "0.0")
-        print(calculateSplit(billAmt: billAmount!))
+        if billAmount == 0.0 {
+            print("No amount added")
+        }
+        else{
+            totalSplitAmount = calculateSplit(billAmt: billAmount ?? 0.0)
+        }
+        
+        
+        self.performSegue(withIdentifier: "gotoResult", sender: self)
         
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destinationVC = segue.destination as? ResultViewController
+        destinationVC?.totalSplitAmt = totalSplitAmount
+        destinationVC?.splitNumber = splitNumber
+        destinationVC?.tipPercentage = tipPc
+        
+    }
+    
+    
+    
+    
     
     func calculateSplit(billAmt:Double)->Double{
         let tipAmount = billAmt * tipPc
